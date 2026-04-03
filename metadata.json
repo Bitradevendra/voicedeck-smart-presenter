@@ -1,0 +1,7 @@
+{
+  "name": "VoiceDeck Smart Presenter",
+  "description": "Next-gen AI presentation tool. Control slides with custom voice wakeup words and get real-time AI translation subtitles.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

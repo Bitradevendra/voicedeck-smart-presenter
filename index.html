@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VoiceDeck Smart Presenter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            },
+            colors: {
+              brand: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                900: '#0c4a6e',
+              }
+            },
+            animation: {
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #1e1e1e; }
+      ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #777; }
+      
+      /* --- Base Transition Class --- */
+      .slide-enter-active, .slide-leave-active { transition: all 0.8s ease-in-out; }
+      
+      /* --- EXTENSIVE EFFECTS LIBRARY --- */
+
+      /* EXISTING EFFECTS */
+      .effect-accordion { animation: accordion 1s ease-out; transform-origin: center; }
+      @keyframes accordion { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+      .effect-airplane { animation: airplane 1.2s ease-in-out; }
+      @keyframes airplane { from { transform: scale(0.2) translate(-100%, 100%) rotate(-20deg); opacity: 0; } to { transform: scale(1) translate(0, 0) rotate(0); opacity: 1; } }
+      .effect-bars { animation: bars 1s ease-in-out; }
+      @keyframes bars { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+      .effect-blend { animation: blend 1.5s ease-in-out; mix-blend-mode: hard-light; }
+      @keyframes blend { from { opacity: 0; filter: contrast(2); } to { opacity: 1; filter: contrast(1); } }
+      .effect-blinds { animation: blinds 1s linear; }
+      @keyframes blinds { from { clip-path: polygon(0 0, 100% 0, 100% 0, 0 0, 0 20%, 100% 20%, 100% 20%, 0 20%, 0 40%, 100% 40%, 100% 40%, 0 40%, 0 60%, 100% 60%, 100% 60%, 0 60%, 0 80%, 100% 80%, 100% 80%, 0 80%); } to { clip-path: polygon(0 0, 100% 0, 100% 20%, 0 20%, 0 20%, 100% 20%, 100% 40%, 0 40%, 0 40%, 100% 40%, 100% 60%, 0 60%, 0 60%, 100% 60%, 100% 80%, 0 80%, 0 80%, 100% 80%, 100% 100%, 0 100%); } }
+      .effect-bounce { animation: bounceIn 1s; }
+      @keyframes bounceIn { 0%, 20%, 40%, 60%, 80%, 100% {transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);} 0% {opacity: 0; transform: scale3d(.3, .3, .3);} 20% {transform: scale3d(1.1, 1.1, 1.1);} 40% {transform: scale3d(.9, .9, .9);} 60% {opacity: 1; transform: scale3d(1.03, 1.03, 1.03);} 80% {transform: scale3d(.97, .97, .97);} 100% {opacity: 1; transform: scale3d(1, 1, 1);} }
+      .effect-bouncy-dots { animation: bouncyDots 1s steps(5); }
+      @keyframes bouncyDots { from { transform: scale(0); opacity: 0; } 50% { transform: scale(1.2); } to { transform: scale(1); opacity: 1; } }
+      .effect-box { animation: boxIn 0.8s ease; transform-origin: 50% 100%; }
+      @keyframes boxIn { from { transform: perspective(1000px) rotateX(90deg); opacity: 0; } to { transform: perspective(1000px) rotateX(0deg); opacity: 1; } }
+      .effect-checkerboard { animation: checkerboard 1s steps(10); -webkit-mask-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000); -webkit-mask-size: 60px 60px; -webkit-mask-position: 0 0, 30px 30px; }
+      @keyframes checkerboard { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
+      .effect-circles { animation: circles 1s ease-in; clip-path: circle(0% at 50% 50%); }
+      @keyframes circles { to { clip-path: circle(150% at 50% 50%); } }
+      .effect-clock { animation: clock 1.2s linear; clip-path: polygon(50% 50%, 50% 0, 50% 0, 50% 0, 50% 0, 50% 0); }
+      @keyframes clock { 0% { clip-path: polygon(50% 50%, 50% 0, 50% 0, 50% 0, 50% 0, 50% 0); } 25% { clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%, 100% 50%, 100% 50%); } 50% { clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 50% 100%, 50% 100%); } 75% { clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 50%); } 100% { clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 0); } }
+      .effect-comb { animation: comb 1s ease; }
+      @keyframes comb { from { transform: scaleX(2) translateX(-20%); opacity: 0; filter: blur(10px); } to { transform: scaleX(1) translateX(0); opacity: 1; filter: blur(0); } }
+      .effect-conveyor { animation: conveyor 1s linear; }
+      @keyframes conveyor { from { transform: translateX(100%); } to { transform: translateX(0); } }
+      .effect-cover { animation: cover 0.8s ease-out; z-index: 10; }
+      @keyframes cover { from { transform: translateX(100%); z-index: 10; } to { transform: translateX(0); z-index: 10; } }
+      .effect-cube { animation: cubeEnter 1s cubic-bezier(0.25, 1, 0.5, 1); }
+      @keyframes cubeEnter { from { transform: perspective(1000px) rotateY(90deg) translateX(50%); opacity: 0; } to { transform: perspective(1000px) rotateY(0deg) translateX(0); opacity: 1; } }
+      .effect-cut { animation: cut 0.1s linear; }
+      @keyframes cut { from { opacity: 0; } to { opacity: 1; } }
+      .effect-diamond { animation: diamond 1s ease-in-out; clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%); }
+      @keyframes diamond { to { clip-path: polygon(50% -50%, 150% 50%, 50% 150%, -50% 50%); } }
+      .effect-dissolve { animation: fadeIn 1.5s ease-in-out; }
+      .effect-fade { animation: fadeIn 0.8s ease-in-out; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .effect-falling-confetti { animation: confetti 1.2s ease-out; transform-origin: 50% -50%; }
+      @keyframes confetti { from { transform: translateY(-100%) rotate(10deg); opacity: 0; } to { transform: translateY(0) rotate(0); opacity: 1; } }
+      .effect-ferris-wheel { animation: ferris 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); transform-origin: 50% 100%; }
+      @keyframes ferris { from { transform: rotate(90deg); opacity: 0; } to { transform: rotate(0); opacity: 1; } }
+      .effect-fine-dust { animation: dust 2s ease; }
+      @keyframes dust { from { filter: blur(20px) grayscale(1); opacity: 0; transform: scale(1.1); } to { filter: blur(0) grayscale(0); opacity: 1; transform: scale(1); } }
+      .effect-flash { animation: flash 0.5s ease-out; }
+      @keyframes flash { 0% { opacity: 0; filter: brightness(5); } 100% { opacity: 1; filter: brightness(1); } }
+      .effect-flip { animation: flipX 0.8s; backface-visibility: hidden; }
+      @keyframes flipX { from { transform: perspective(400px) rotateX(90deg); opacity: 0; } to { transform: perspective(400px) rotateX(0deg); opacity: 1; } }
+      .effect-fracture { animation: fracture 0.8s ease-in-out; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      @keyframes fracture { from { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%); transform: scale(0.8) rotate(5deg); opacity: 0; } to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transform: scale(1) rotate(0); opacity: 1; } }
+      .effect-gallery { animation: gallery 1s ease; transform-origin: left center; }
+      @keyframes gallery { from { transform: perspective(800px) rotateY(-45deg) translateX(-200px); opacity: 0; } to { transform: perspective(800px) rotateY(0) translateX(0); opacity: 1; } }
+      .effect-glitter { animation: glitter 1s linear; }
+      @keyframes glitter { 0% { opacity: 0; filter: contrast(1.5) brightness(1.5); } 50% { opacity: 0.5; filter: contrast(2) brightness(2) hue-rotate(90deg); } 100% { opacity: 1; filter: contrast(1) brightness(1) hue-rotate(0); } }
+      .effect-helix { animation: helix 1s linear; transform-style: preserve-3d; }
+      @keyframes helix { from { transform: rotateY(180deg) scale(0); opacity: 0; } to { transform: rotateY(0) scale(1); opacity: 1; } }
+      .effect-honeycomb { animation: honeycomb 1.2s ease-out; -webkit-mask-image: radial-gradient(circle, black 50%, transparent 50%); -webkit-mask-size: 40px 40px; }
+      @keyframes honeycomb { from { -webkit-mask-position: 0 0; opacity: 0; transform: scale(1.2); } to { -webkit-mask-position: 20px 20px; opacity: 1; transform: scale(1); } }
+      .effect-iris { animation: iris 1s ease-in-out; clip-path: circle(0% at 50% 50%); }
+      @keyframes iris { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(100% at 50% 50%); } }
+      .effect-lens-flare { animation: flare 1s ease-out; }
+      @keyframes flare { from { opacity: 0; filter: brightness(3) drop-shadow(0 0 50px white); } to { opacity: 1; filter: brightness(1) drop-shadow(0 0 0 transparent); } }
+      .effect-morph { animation: morph 1s ease-in-out; }
+      @keyframes morph { from { border-radius: 50%; transform: scale(0); opacity: 0; } to { border-radius: 0; transform: scale(1); opacity: 1; } }
+      .effect-origami { animation: origami 1.2s ease-in-out; transform-origin: top center; }
+      @keyframes origami { from { transform: perspective(600px) rotateX(-90deg); opacity: 0; } 50% { transform: perspective(600px) rotateX(45deg); opacity: 0.5; } to { transform: perspective(600px) rotateX(0); opacity: 1; } }
+      .effect-pages { animation: pages 1s ease; transform-origin: 0 50%; }
+      @keyframes pages { from { transform: perspective(1000px) rotateY(-90deg); opacity: 0; } to { transform: perspective(1000px) rotateY(0); opacity: 1; } }
+      .effect-pan { animation: pan 15s ease-in-out infinite alternate; }
+      @keyframes pan { from { transform: scale(1.2) translate(-10%, -10%); opacity: 0; } 10% { opacity: 1; } to { transform: scale(1.2) translate(10%, 10%); opacity: 1; } }
+      .effect-peel-off { animation: peel 1s ease-in; transform-origin: top left; }
+      @keyframes peel { from { clip-path: polygon(100% 100%, 0 0, 0 0); } to { clip-path: polygon(100% 100%, 0 0, 100% 0); } }
+      .effect-pinwheel { animation: pinwheel 1s ease-out; clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%, 100% 100%, 50% 100%, 0 100%, 0 50%, 0 0, 50% 0); }
+      @keyframes pinwheel { from { transform: rotate(720deg) scale(0); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+      .effect-pixelate { animation: pixelate 0.8s steps(10); }
+      @keyframes pixelate { from { filter: blur(20px); transform: scale(1.1); opacity: 0; } to { filter: blur(0); transform: scale(1); opacity: 1; } }
+      .effect-pulse { animation: pulseEnter 0.6s cubic-bezier(0.4, 0, 0.6, 1); }
+      @keyframes pulseEnter { 0% { transform: scale(0.9); opacity: 0; } 70% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); } }
+      .effect-push { animation: push 0.8s ease-out; }
+      @keyframes push { from { transform: translateY(100%); } to { transform: translateY(0); } }
+      .effect-reveal { animation: reveal 1s ease-in-out; clip-path: inset(50% 0 50% 0); }
+      @keyframes reveal { to { clip-path: inset(0 0 0 0); } }
+      .effect-rotate { animation: rotateEnter 0.8s; transform-origin: center; }
+      @keyframes rotateEnter { from { transform: rotate(-180deg) scale(0); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+      .effect-shred { animation: shred 1s ease-in-out; -webkit-mask-image: repeating-linear-gradient(90deg, black, black 10px, transparent 10px, transparent 20px); }
+      @keyframes shred { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      .effect-shuffle { animation: shuffle 0.8s ease-out; }
+      @keyframes shuffle { 0% { transform: translateX(-50%) scale(0.8); opacity: 0; z-index: 1; } 50% { transform: translateX(10%) scale(0.9); opacity: 0.5; z-index: 5; } 100% { transform: translateX(0) scale(1); opacity: 1; z-index: 10; } }
+      .effect-sparkle { animation: sparkle 1.2s linear; }
+      @keyframes sparkle { 0% { opacity: 0; filter: brightness(0.5); } 50% { opacity: 0.8; filter: brightness(2) contrast(1.5); } 100% { opacity: 1; filter: brightness(1); } }
+      .effect-spiral { animation: spiral 1s ease-in; }
+      @keyframes spiral { from { transform: rotate(360deg) scale(0); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+      .effect-split { animation: split 1s cubic-bezier(0.16, 1, 0.3, 1); clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); }
+      @keyframes split { from { clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%); opacity: 0; } to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; } }
+      .effect-spotlight { animation: spotlight 1.2s ease-out; -webkit-mask-image: radial-gradient(circle, black 100%, transparent 100%); }
+      @keyframes spotlight { from { -webkit-mask-size: 0% 0%; opacity: 0; } to { -webkit-mask-size: 200% 200%; opacity: 1; } }
+      .effect-stairs { animation: stairs 1s steps(5); transform-origin: bottom left; }
+      @keyframes stairs { from { transform: translateY(100%) scale(0.5); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+      .effect-tiles { animation: tiles 1s ease-out; -webkit-mask-image: repeating-linear-gradient(45deg, black, black 20px, transparent 20px, transparent 40px); }
+      @keyframes tiles { from { transform: scale(1.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .effect-turbulence { animation: turbulence 1s linear; }
+      @keyframes turbulence { 0% { transform: scale(1.2) translate(-5%, -5%); opacity: 0; filter: url('#turbulence'); } 25% { transform: scale(1.1) translate(5%, 5%); } 50% { transform: scale(1.1) translate(-5%, 5%); } 75% { transform: scale(1.05) translate(5%, -5%); } 100% { transform: scale(1) translate(0, 0); opacity: 1; } }
+      .effect-uncover { animation: uncover 0.8s ease-in; z-index: 1; }
+      @keyframes uncover { from { transform: translateX(-100%); z-index: 20; } to { transform: translateX(0); z-index: 20; } }
+      .effect-vortex { animation: vortex 1.5s ease-in; transform-origin: center center; }
+      @keyframes vortex { from { transform: rotate(720deg) scale(0); filter: blur(10px); opacity: 0; } to { transform: rotate(0) scale(1); filter: blur(0); opacity: 1; } }
+      .effect-wedge { animation: wedge 1s linear; clip-path: circle(100% at 50% 50%); }
+      @keyframes wedge { from { clip-path: polygon(50% 50%, 50% 0, 50% 0); opacity: 0; } to { clip-path: polygon(50% 50%, 50% 0, 50% 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 0); opacity: 1; } }
+      .effect-wheelbarrow { animation: wheelbarrow 1s ease-out; transform-origin: 50% 100%; }
+      @keyframes wheelbarrow { from { transform: rotateX(-45deg) translateY(100%); opacity: 0; } to { transform: rotateX(0) translateY(0); opacity: 1; } }
+      .effect-window { animation: window 1s ease-in-out; clip-path: inset(0 0 0 0); }
+      @keyframes window { from { clip-path: inset(50% 50% 50% 50%); opacity: 0; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+      .effect-wipe { animation: wipe 0.8s linear; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      @keyframes wipe { from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); } to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); } }
+      .effect-zoom { animation: zoomIn 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+      @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+      /* --- NEW 3D EFFECTS --- */
+      .effect-arrive { animation: arrive 1s ease-out; }
+      @keyframes arrive { from { transform: scale(0.1) translateZ(-500px); opacity: 0; } to { transform: scale(1) translateZ(0); opacity: 1; } }
+      
+      .effect-leave { animation: leaveEnter 1s ease-out; }
+      @keyframes leaveEnter { from { transform: scale(2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+      .effect-turntable { animation: turntable 1.2s ease-in-out; transform-origin: center bottom; }
+      @keyframes turntable { from { transform: rotateX(20deg) rotateY(180deg); opacity: 0; } to { transform: rotateX(0) rotateY(0); opacity: 1; } }
+
+      .effect-swing { animation: swing 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: top center; }
+      @keyframes swing { from { transform: rotateX(-100deg); opacity: 0; } to { transform: rotateX(0); opacity: 1; } }
+
+      .effect-jump-turn { animation: jumpTurn 1s ease; }
+      @keyframes jumpTurn { 0% { transform: scale(0) rotate(0); opacity: 0; } 50% { transform: scale(1.2) rotate(180deg); } 100% { transform: scale(1) rotate(360deg); opacity: 1; } }
+
+      .effect-rotate-3d { animation: rotate3d 1s ease; }
+      @keyframes rotate3d { from { transform: rotate3d(1, 1, 1, 90deg); opacity: 0; } to { transform: rotate3d(0, 0, 0, 0); opacity: 1; } }
+
+      .effect-orbit-3d { animation: orbit3d 1.5s linear; transform-origin: center; }
+      @keyframes orbit3d { from { transform: rotateY(180deg) translateX(200px) scale(0.5); opacity: 0; } to { transform: rotateY(0) translateX(0) scale(1); opacity: 1; } }
+
+      .effect-pan-3d { animation: pan3d 1s ease-out; }
+      @keyframes pan3d { from { transform: perspective(500px) rotateY(-30deg) translateZ(-100px); opacity: 0; } to { transform: perspective(500px) rotateY(0) translateZ(0); opacity: 1; } }
+
+      .effect-spin-3d { animation: spin3d 1s ease-out; }
+      @keyframes spin3d { from { transform: rotateY(360deg) scale(0); opacity: 0; } to { transform: rotateY(0) scale(1); opacity: 1; } }
+
+      .effect-tilt-3d { animation: tilt3d 1s ease-out; transform-origin: bottom; }
+      @keyframes tilt3d { from { transform: rotateX(90deg); opacity: 0; } to { transform: rotateX(0); opacity: 1; } }
+
+      /* --- CLASSIC EFFECTS --- */
+      .effect-newsflash { animation: newsflash 1s ease-in; }
+      @keyframes newsflash { from { transform: rotate(720deg) scale(0.1); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+
+      .effect-outline { animation: outline 1s ease-out; clip-path: inset(0 0 0 0); }
+      @keyframes outline { from { clip-path: inset(10% 10% 10% 10%); opacity: 0; filter: grayscale(1); } to { clip-path: inset(0 0 0 0); opacity: 1; filter: grayscale(0); } }
+
+      .effect-uncover-left { animation: uncoverLeft 0.8s ease-out; }
+      @keyframes uncoverLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
+      .effect-uncover-right { animation: uncoverRight 0.8s ease-out; }
+      @keyframes uncoverRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+      .effect-uncover-up { animation: uncoverUp 0.8s ease-out; }
+      @keyframes uncoverUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+      .effect-uncover-down { animation: uncoverDown 0.8s ease-out; }
+      @keyframes uncoverDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+
+      .effect-wedge-left { animation: wedgeLeft 1s ease; clip-path: circle(100% at 0 50%); }
+      @keyframes wedgeLeft { from { clip-path: circle(0% at 0 50%); } to { clip-path: circle(150% at 0 50%); } }
+      .effect-wedge-right { animation: wedgeRight 1s ease; clip-path: circle(100% at 100% 50%); }
+      @keyframes wedgeRight { from { clip-path: circle(0% at 100% 50%); } to { clip-path: circle(150% at 100% 50%); } }
+
+      .effect-blinds-left { animation: blindsLeft 1s linear; }
+      @keyframes blindsLeft { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); transform-origin: left; } }
+      .effect-blinds-right { animation: blindsRight 1s linear; }
+      @keyframes blindsRight { from { transform: scaleX(0); transform-origin: right; } to { transform: scaleX(1); transform-origin: right; } }
+      .effect-blinds-up { animation: blindsUp 1s linear; }
+      @keyframes blindsUp { from { transform: scaleY(0); transform-origin: top; } to { transform: scaleY(1); transform-origin: top; } }
+      .effect-blinds-down { animation: blindsDown 1s linear; }
+      @keyframes blindsDown { from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); transform-origin: bottom; } }
+
+      .effect-comb-horizontal { animation: combH 1s ease; -webkit-mask-image: repeating-linear-gradient(to right, black 0%, black 2%, transparent 2%, transparent 4%); -webkit-mask-size: 100% 100%; }
+      @keyframes combH { from { -webkit-mask-size: 0% 100%; } to { -webkit-mask-size: 5000% 100%; } }
+      .effect-comb-vertical { animation: combV 1s ease; -webkit-mask-image: repeating-linear-gradient(to bottom, black 0%, black 2%, transparent 2%, transparent 4%); }
+      @keyframes combV { from { -webkit-mask-size: 100% 0%; } to { -webkit-mask-size: 100% 5000%; } }
+
+      .effect-pan-up { animation: panUp 1s ease-out; }
+      @keyframes panUp { from { transform: translateY(20%) scale(1.1); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+      .effect-pan-down { animation: panDown 1s ease-out; }
+      @keyframes panDown { from { transform: translateY(-20%) scale(1.1); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+      .effect-pan-left { animation: panLeft 1s ease-out; }
+      @keyframes panLeft { from { transform: translateX(20%) scale(1.1); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+      .effect-pan-right { animation: panRight 1s ease-out; }
+      @keyframes panRight { from { transform: translateX(-20%) scale(1.1); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+
+      .effect-plus { animation: plus 1s ease-in; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      @keyframes plus { from { clip-path: polygon(40% 40%, 60% 40%, 60% 60%, 40% 60%); opacity: 0; } to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; } }
+      
+      .effect-advance { animation: advance 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+      @keyframes advance { from { transform: scale(0.8) perspective(500px) rotateX(10deg); opacity: 0; } to { transform: scale(1) perspective(500px) rotateX(0); opacity: 1; } }
+
+      .effect-shrink { animation: shrinkEnter 1s ease-out; }
+      @keyframes shrinkEnter { from { transform: scale(1.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .effect-expand { animation: expandEnter 1s ease-out; }
+      @keyframes expandEnter { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .effect-collapse { animation: collapse 1s ease-in; transform-origin: center; }
+      @keyframes collapse { from { transform: scaleX(3) scaleY(3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .effect-stretch { animation: stretch 1s ease-out; transform-origin: center; }
+      @keyframes stretch { from { transform: scaleX(0.1); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+      .effect-squeeze { animation: squeeze 1s ease-out; transform-origin: center; }
+      @keyframes squeeze { from { transform: scaleY(0.1); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+
+      .effect-whip { animation: whip 0.8s ease-in-out; transform-origin: bottom left; }
+      @keyframes whip { from { transform: rotate(-30deg) translateX(-50%); opacity: 0; } to { transform: rotate(0) translateX(0); opacity: 1; } }
+
+      .effect-ripple { animation: ripple 1.5s ease-out; }
+      @keyframes ripple { from { transform: scale(1.1); filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='ripple'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='2' result='noise'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='noise' scale='20' /%3E%3C/filter%3E#ripple"); opacity: 0; } to { transform: scale(1); filter: none; opacity: 1; } }
+
+      .effect-glide { animation: glide 1.2s ease-out; }
+      @keyframes glide { from { transform: translateX(50%) skewX(-20deg); opacity: 0; } to { transform: translateX(0) skewX(0); opacity: 1; } }
+
+      /* --- SMOOTH / ANIMATED --- */
+      .effect-fade-black { animation: fadeBlack 1.5s ease; background: black; }
+      @keyframes fadeBlack { 0% { opacity: 0; filter: brightness(0); } 50% { opacity: 1; filter: brightness(0); } 100% { filter: brightness(1); } }
+      .effect-fade-white { animation: fadeWhite 1.5s ease; background: white; }
+      @keyframes fadeWhite { 0% { opacity: 0; filter: brightness(2); } 50% { opacity: 1; filter: brightness(2); } 100% { filter: brightness(1); } }
+
+      .effect-drift { animation: drift 5s linear infinite alternate; }
+      @keyframes drift { from { transform: translate(-2%, -2%); } to { transform: translate(2%, 2%); } }
+
+      .effect-crush { animation: crush 1s ease-out; transform-origin: top; }
+      @keyframes crush { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+      .effect-grind { animation: grind 1s steps(5); }
+      @keyframes grind { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+      .effect-emboss { animation: emboss 1s ease; }
+      @keyframes emboss { 0% { filter: sepia(1) contrast(2); opacity: 0; } 100% { filter: sepia(0) contrast(1); opacity: 1; } }
+      .effect-shallow { animation: shallow 1s ease; }
+      @keyframes shallow { 0% { transform: scale(0.95); filter: blur(2px); opacity: 0; } 100% { transform: scale(1); filter: blur(0); opacity: 1; } }
+      .effect-depth { animation: depth 1s ease; }
+      @keyframes depth { 0% { transform: scale(1.1); filter: blur(5px); opacity: 0; } 100% { transform: scale(1); filter: blur(0); opacity: 1; } }
+
+      .effect-reflow { animation: reflow 1.2s ease-in-out; }
+      @keyframes reflow { 0% { clip-path: circle(0% at 50% 50%); } 50% { clip-path: circle(50% at 50% 50%); transform: rotate(5deg); } 100% { clip-path: circle(150% at 50% 50%); transform: rotate(0); } }
+
+      .effect-push-up { animation: pushUp 0.8s ease-out; }
+      @keyframes pushUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+      .effect-push-down { animation: pushDown 0.8s ease-out; }
+      @keyframes pushDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+      .effect-push-left { animation: pushLeft 0.8s ease-out; }
+      @keyframes pushLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
+      .effect-push-right { animation: pushRight 0.8s ease-out; }
+      @keyframes pushRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+      .effect-siphon { animation: siphon 1s ease-in-out; transform-origin: top left; }
+      @keyframes siphon { from { transform: scale(0) rotate(90deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+      .effect-swivel { animation: swivel 1s ease-out; transform-origin: center bottom; }
+      @keyframes swivel { from { transform: rotateX(70deg); opacity: 0; } to { transform: rotateX(0); opacity: 1; } }
+      .effect-tumble { animation: tumble 1s ease-out; transform-origin: bottom left; }
+      @keyframes tumble { from { transform: rotate(-45deg) translate(-100%, 100%); opacity: 0; } to { transform: rotate(0) translate(0, 0); opacity: 1; } }
+
+      .effect-cascade { animation: cascade 1s ease-out; clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); }
+      @keyframes cascade { to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); } }
+
+      .effect-wave { animation: wave 1.5s ease-in-out; transform-origin: top; }
+      @keyframes wave { 0% { transform: scaleY(0.8) skewX(10deg); opacity: 0; } 50% { transform: scaleY(1.1) skewX(-10deg); } 100% { transform: scaleY(1) skewX(0); opacity: 1; } }
+
+      .effect-cloud { animation: cloud 1.5s ease; filter: blur(20px); }
+      @keyframes cloud { 0% { filter: blur(20px); opacity: 0; transform: scale(1.1); } 100% { filter: blur(0); opacity: 1; transform: scale(1); } }
+
+      .effect-shimmer { animation: shimmer 2s linear infinite; mask: linear-gradient(110deg, #000 30%, rgba(0,0,0,0.5) 40%, #000 50%); mask-size: 200% 100%; }
+      @keyframes shimmer { 0% { mask-position: 200% 0; } 100% { mask-position: -200% 0; } }
+      .effect-glimmer { animation: glimmer 1s ease-in-out; }
+      @keyframes glimmer { 0% { opacity: 0.5; filter: brightness(1.5); } 50% { opacity: 1; filter: brightness(2); } 100% { opacity: 1; filter: brightness(1); } }
+      .effect-flicker { animation: flicker 0.5s steps(5); }
+      @keyframes flicker { 0% { opacity: 0; } 20% { opacity: 1; } 40% { opacity: 0; } 60% { opacity: 1; } 80% { opacity: 0; } 100% { opacity: 1; } }
+
+      .effect-pulse-light { animation: pulseLight 1s ease-in-out; }
+      @keyframes pulseLight { 0% { filter: brightness(1); } 50% { filter: brightness(1.5); } 100% { filter: brightness(1); } }
+      .effect-pulse-dark { animation: pulseDark 1s ease-in-out; }
+      @keyframes pulseDark { 0% { filter: brightness(1); } 50% { filter: brightness(0.5); } 100% { filter: brightness(1); } }
+      .effect-strobe { animation: strobe 0.2s steps(2) infinite; }
+      @keyframes strobe { from { opacity: 1; } to { opacity: 0.2; } }
+
+      .effect-swirl { animation: swirl 1s ease-out; transform-origin: center; }
+      @keyframes swirl { from { transform: rotate(180deg) scale(0); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+      .effect-twirl { animation: twirl 1s cubic-bezier(0.6, -0.28, 0.735, 0.045); }
+      @keyframes twirl { from { transform: rotate(720deg) scale(0); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+
+      .effect-hop { animation: hop 0.8s ease-out; }
+      @keyframes hop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+      .effect-skip { animation: skip 0.8s steps(3); }
+      @keyframes skip { from { transform: translateX(-50%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      .effect-jump { animation: jump 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+      @keyframes jump { 0% { transform: translateY(100%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+      
+      .effect-float { animation: floatAnim 3s ease-in-out infinite; }
+      @keyframes floatAnim { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+
+      .effect-bounce-left { animation: bounceLeft 1s; }
+      @keyframes bounceLeft { 0%, 60%, 75%, 90%, 100% { transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); } 0% { opacity: 0; transform: translate3d(-3000px, 0, 0); } 60% { opacity: 1; transform: translate3d(25px, 0, 0); } 75% { transform: translate3d(-10px, 0, 0); } 90% { transform: translate3d(5px, 0, 0); } 100% { transform: none; } }
+      .effect-bounce-right { animation: bounceRight 1s; }
+      @keyframes bounceRight { 0%, 60%, 75%, 90%, 100% { transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); } 0% { opacity: 0; transform: translate3d(3000px, 0, 0); } 60% { opacity: 1; transform: translate3d(-25px, 0, 0); } 75% { transform: translate3d(10px, 0, 0); } 90% { transform: translate3d(-5px, 0, 0); } 100% { transform: none; } }
+      .effect-bounce-up { animation: bounceUp 1s; }
+      @keyframes bounceUp { 0%, 60%, 75%, 90%, 100% { transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); } 0% { opacity: 0; transform: translate3d(0, 3000px, 0); } 60% { opacity: 1; transform: translate3d(0, -20px, 0); } 75% { transform: translate3d(0, 10px, 0); } 90% { transform: translate3d(0, -5px, 0); } 100% { transform: none; } }
+      .effect-bounce-down { animation: bounceDown 1s; }
+      @keyframes bounceDown { 0%, 60%, 75%, 90%, 100% { transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); } 0% { opacity: 0; transform: translate3d(0, -3000px, 0); } 60% { opacity: 1; transform: translate3d(0, 25px, 0); } 75% { transform: translate3d(0, -10px, 0); } 90% { transform: translate3d(0, 5px, 0); } 100% { transform: none; } }
+
+      .effect-spring { animation: spring 1s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+      @keyframes spring { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+      .effect-sway { animation: sway 2s ease-in-out infinite alternate; transform-origin: top; }
+      @keyframes sway { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+
+      .effect-pendulum { animation: pendulum 1.5s ease-in-out infinite alternate; transform-origin: top; }
+      @keyframes pendulum { from { transform: rotate(-15deg); } to { transform: rotate(15deg); } }
+
+      .effect-rock { animation: rock 1s ease-in-out infinite alternate; transform-origin: bottom; }
+      @keyframes rock { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+
+      .effect-float-up { animation: floatUp 1s ease-out; }
+      @keyframes floatUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      .effect-float-down { animation: floatDown 1s ease-out; }
+      @keyframes floatDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      .effect-float-left { animation: floatLeft 1s ease-out; }
+      @keyframes floatLeft { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      .effect-float-right { animation: floatRight 1s ease-out; }
+      @keyframes floatRight { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+      .effect-smooth-step { animation: smoothStep 1s cubic-bezier(0.4, 0.0, 0.2, 1); }
+      @keyframes smoothStep { from { opacity: 0; } to { opacity: 1; } }
+      .effect-ease-in { animation: easeIn 1s ease-in; }
+      @keyframes easeIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      .effect-ease-out { animation: easeOut 1s ease-out; }
+      @keyframes easeOut { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      .effect-ease-in-out { animation: easeInOut 1s ease-in-out; }
+      @keyframes easeInOut { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .effect-decelerate { animation: decelerate 1s cubic-bezier(0.0, 0.0, 0.2, 1); }
+      @keyframes decelerate { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+      .effect-accelerate { animation: accelerate 1s cubic-bezier(0.4, 0.0, 1, 1); }
+      @keyframes accelerate { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+      /* --- ADVANCED 3D MORPH --- */
+      .effect-morph-3d-rotate { animation: morphRotate 1.5s ease-in-out; }
+      @keyframes morphRotate { 0% { transform: rotateY(0); } 50% { transform: rotateY(90deg) scale(0.8); } 100% { transform: rotateY(0) scale(1); } }
+      .effect-morph-3d-flip { animation: morphFlip 1.5s ease-in-out; }
+      @keyframes morphFlip { 0% { transform: rotateX(0); } 50% { transform: rotateX(180deg) scale(0.8); } 100% { transform: rotateX(360deg) scale(1); } }
+      .effect-morph-3d-spin { animation: morphSpin 1.5s ease-in-out; }
+      @keyframes morphSpin { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(0.2); } 100% { transform: rotate(360deg) scale(1); } }
+      .effect-morph-3d-expand { animation: morphExpand 1.5s ease-in-out; }
+      @keyframes morphExpand { 0% { transform: scale(0.5); border-radius: 50%; } 100% { transform: scale(1); border-radius: 0; } }
+      .effect-morph-3d-compress { animation: morphCompress 1.5s ease-in-out; }
+      @keyframes morphCompress { 0% { transform: scale(1.5); } 100% { transform: scale(1); } }
+      
+      .effect-morph-object { animation: morphObj 1.5s ease; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      @keyframes morphObj { 0% { clip-path: circle(10% at 50% 50%); } 50% { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); } 100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); } }
+      .effect-morph-position { animation: morphPos 1s ease-in-out; }
+      @keyframes morphPos { 0% { transform: translate(-100%, -100%) scale(0.2); } 100% { transform: translate(0, 0) scale(1); } }
+      .effect-morph-size { animation: morphSize 1s ease-in-out; }
+      @keyframes morphSize { 0% { width: 10%; height: 10%; opacity: 0; } 100% { width: 100%; height: 100%; opacity: 1; } }
+      .effect-morph-color { animation: morphColor 1.5s ease; filter: hue-rotate(0deg); }
+      @keyframes morphColor { 0% { filter: hue-rotate(90deg) saturate(0); } 100% { filter: hue-rotate(0) saturate(1); } }
+
+      /* --- PREMIUM / SPECIALTY --- */
+      .effect-plane { animation: plane 1.2s ease-in-out; transform-style: preserve-3d; }
+      @keyframes plane { from { transform: rotateY(60deg) translateZ(-200px); opacity: 0; } to { transform: rotateY(0) translateZ(0); opacity: 1; } }
+      .effect-plane-left { animation: planeLeft 1s ease-out; transform-origin: left; }
+      @keyframes planeLeft { from { transform: perspective(1000px) rotateY(90deg); opacity: 0; } to { transform: perspective(1000px) rotateY(0); opacity: 1; } }
+      .effect-plane-right { animation: planeRight 1s ease-out; transform-origin: right; }
+      @keyframes planeRight { from { transform: perspective(1000px) rotateY(-90deg); opacity: 0; } to { transform: perspective(1000px) rotateY(0); opacity: 1; } }
+      .effect-plane-up { animation: planeUp 1s ease-out; transform-origin: top; }
+      @keyframes planeUp { from { transform: perspective(1000px) rotateX(-90deg); opacity: 0; } to { transform: perspective(1000px) rotateX(0); opacity: 1; } }
+      .effect-plane-down { animation: planeDown 1s ease-out; transform-origin: bottom; }
+      @keyframes planeDown { from { transform: perspective(1000px) rotateX(90deg); opacity: 0; } to { transform: perspective(1000px) rotateX(0); opacity: 1; } }
+      .effect-plane-diagonal { animation: planeDiag 1s ease-out; }
+      @keyframes planeDiag { from { transform: rotate3d(1, 1, 0, 90deg); opacity: 0; } to { transform: rotate3d(0, 0, 0, 0); opacity: 1; } }
+
+      .effect-helix-left { animation: helixLeft 1.2s ease-in-out; }
+      @keyframes helixLeft { from { transform: rotateY(180deg) translateX(-100%); opacity: 0; } to { transform: rotateY(0) translateX(0); opacity: 1; } }
+      .effect-helix-right { animation: helixRight 1.2s ease-in-out; }
+      @keyframes helixRight { from { transform: rotateY(-180deg) translateX(100%); opacity: 0; } to { transform: rotateY(0) translateX(0); opacity: 1; } }
+
+      /* Approximating complex 3D shapes via CSS transforms */
+      .effect-tetrahedron { animation: tetrahedron 1.5s linear; transform-origin: center; }
+      @keyframes tetrahedron { 0% { transform: rotateX(0) rotateY(0); opacity: 0; } 50% { transform: rotateX(180deg) rotateY(180deg) scale(0.5); } 100% { transform: rotateX(360deg) rotateY(360deg) scale(1); opacity: 1; } }
+      .effect-octahedron { animation: octahedron 1.5s linear; }
+      @keyframes octahedron { 0% { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); transform: rotate(0); opacity: 0; } 50% { transform: rotate(180deg) scale(0.8); } 100% { clip-path: inset(0 0 0 0); transform: rotate(360deg); opacity: 1; } }
+      .effect-icosahedron { animation: icosahedron 1.5s ease-in-out; }
+      @keyframes icosahedron { 0% { transform: rotate3d(1, 1, 1, 120deg) scale(0.1); opacity: 0; } 100% { transform: rotate3d(0, 0, 0, 0) scale(1); opacity: 1; } }
+
+      .effect-geometric-spin { animation: geoSpin 1.2s ease-in-out; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); }
+      @keyframes geoSpin { 0% { transform: rotate(0); clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); opacity: 0; } 50% { transform: rotate(180deg); clip-path: circle(50% at 50% 50%); } 100% { transform: rotate(360deg); clip-path: inset(0 0 0 0); opacity: 1; } }
+      
+      .effect-quantum { animation: quantum 1s ease-out; }
+      @keyframes quantum { 0% { filter: blur(20px) hue-rotate(90deg); opacity: 0; transform: scale(2); } 50% { filter: blur(0) hue-rotate(-45deg); transform: scale(0.8); } 100% { filter: none; opacity: 1; transform: scale(1); } }
+      
+      .effect-prism-rotate { animation: prism 1.2s ease-in-out; }
+      @keyframes prism { 0% { transform: rotateY(90deg); opacity: 0; filter: hue-rotate(0deg); } 50% { filter: hue-rotate(180deg); } 100% { transform: rotateY(0); opacity: 1; filter: hue-rotate(360deg); } }
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "@heroicons/react/": "https://esm.sh/@heroicons/react@^2.2.0/",
+    "pdfjs-dist": "https://esm.sh/pdfjs-dist@3.11.174"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-slate-900 text-white antialiased selection:bg-brand-500 selection:text-white">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
