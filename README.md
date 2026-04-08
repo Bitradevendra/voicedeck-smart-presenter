@@ -1,10 +1,18 @@
-# voicedeck-smart-presenter
+# VoiceDeck Smart Presenter
 
-`voicedeck-smart-presenter` is a Vite and React presentation tool that supports voice-driven slide control, subtitle generation, and PDF-based slide import.
+A voice-first presentation assistant that turns a static slide deck into an interactive, speech-aware performance tool.
 
-## Overview
+## Why It Stands Out
 
-The application is built as a browser-based presenter assistant. It manages slides, listens for speech commands, switches between presentation states, and uses a Gemini integration for subtitle translation and wake-word suggestions.
+`voicedeck-smart-presenter` is built around a compelling idea: presentations should react to the speaker, not just the clicker. This app listens, switches slides with wake words, translates spoken subtitles, and even pulls slides out of PDFs.
+
+## What It Does
+
+- manages slide-based presentation state in the browser
+- supports voice-triggered slide switching through wake words
+- translates spoken subtitles using Gemini
+- imports PDFs and converts pages into slides
+- supports presentation mode and blank subtitle mode
 
 ## Project Structure
 
@@ -25,21 +33,21 @@ voicedeck-smart-presenter/
 - Node.js 18+
 - npm
 - a `GEMINI_API_KEY` in `.env.local`
+- browser support for the Web Speech API
 
 ## Installation
 
 ```bash
 npm install
-copy .env.local.example .env.local
 ```
 
-If there is no example file yet, create `.env.local` and add:
+Create `.env.local` if needed:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
 ```
 
-## Running The Project
+## Run Locally
 
 Development server:
 
@@ -47,7 +55,7 @@ Development server:
 npm run dev
 ```
 
-Production build:
+Build and preview:
 
 ```bash
 npm run build
@@ -56,7 +64,11 @@ npm run preview
 
 ## How It Works
 
-- `App.tsx` manages slide state, voice recognition, PDF import, and subtitle flow
-- `components/` contains the presentation and transition UI pieces
-- `services/geminiService.ts` handles Gemini-powered translation and wake-word suggestions
-- `types.ts` defines the application state and slide-related types
+- `App.tsx` coordinates slide state, listening state, subtitle state, and PDF import.
+- speech input is matched against wake words to jump between slides.
+- Gemini-backed helpers translate subtitle text and suggest wake words.
+- `components/` holds the rendering pieces for transitions and the presentation UI.
+
+## Best Fit
+
+This is a strong fit for presenters, demo builders, and hackathon teams who want the act of presenting to feel smarter and more theatrical.
